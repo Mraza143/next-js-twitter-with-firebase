@@ -59,13 +59,13 @@ export default function Sidebar() {
       <Image
           width="60"
           height="60"
-          src="http://thispix.com/wp-content/uploads/2015/06/Edit-7576-1-300x300.jpg"
+          src={session.user.image}
           alt="User Profile"
           className="rounded-full xl:mr-2 "
         ></Image>
         <div className="leading-5 hidden xl:inline ml-4">
-          <h4 className="font-bold ">Muhammad Raza</h4>
-          <p className="text-gray-500">@mraza</p>
+          <h4 className="font-bold ">{session.user.name}</h4>
+          <p className="text-gray-500">mraza</p>
           <Cog6ToothIcon className="h-5 xl:ml-8 hidden xl:inline"/>
         </div>
         </div>
