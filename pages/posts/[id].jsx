@@ -5,6 +5,7 @@ import Sidebar from "../../components/Sidebar";
 import Widgets from "../../components/Widgets";
 import Post from "../../components/Post";
 import { useRouter } from "next/router";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
     collection,
@@ -13,7 +14,7 @@ import {
     orderBy,
     query,
   } from "firebase/firestore";
-  import Comment from "../../components/comment";
+  import Comment from "../../components/Comment";
 import { db } from "../../firebase";
 
 export default function PostPage({ newsResults, randomUsersResults }) {
@@ -62,13 +63,24 @@ export default function PostPage({ newsResults, randomUsersResults }) {
           <Post id={id} post={post} />
           {comments.length > 0 && (
             <div className="">
-              {comments.map((comment) => (
-                <Comment
-                  key={comment.id}
-                  id={comment.id}
-                  comment={comment.data()}
-                />
-              ))}
+                 <AnimatePresence>
+                {comments.map((comment) => (
+                  <motion.div
+                    key={comment.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                  >
+                    <Comment
+                      key={comment.id}
+                      commentId={comment.id}
+                      originalPostId={id}
+                      comment={comment.data()}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
         </div>
@@ -97,10 +109,17 @@ export async function getServerSideProps() {
 
   // Who to follow section
 
-  const randomUsersResults = await fetch(
-    "https://randomuser.me/api/?results=30&inc=name,login,picture"
-  ).then((res) => res.json());
+  let randomUsersResults = [];
 
+  try {
+    const res = await fetch(
+      "https://randomuser.me/api/?results=30&inc=name,login,picture"
+    );
+
+    randomUsersResults = await res.json();
+  } catch (e) {
+    randomUsersResults = [];
+  }
   return {
     props: {
       newsResults,

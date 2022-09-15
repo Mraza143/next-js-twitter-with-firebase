@@ -19,8 +19,8 @@ export default function Home({ newsResults, randomUsersResults }) {
       <Feed/>
 
       <Widgets
-          newsResults={newsResults.articles}
-          randomUsersResults={randomUsersResults.results}
+          newsResults={newsResults?.articles}
+          randomUsersResults={randomUsersResults?.results || null}
         />
          <CommentModal />
        
