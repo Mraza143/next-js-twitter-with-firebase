@@ -29,6 +29,7 @@ import {
   const [hasLiked, setHasLiked] = useState(false);
   const [open, setOpen] = useRecoilState(modalState);
   const [postId, setPostId] = useRecoilState(postIdState);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -36,6 +37,14 @@ import {
       (snapshot) => setLikes(snapshot.docs)
     );
   }, [db]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "posts", post.id, "comments"),
+      (snapshot) => setComments(snapshot.docs)
+    );
+  }, [db]);
+
 
   useEffect(() => {
     setHasLiked(
@@ -76,7 +85,7 @@ import {
           alt="user-img"
         />
         {/* right side */}
-        <div className="">
+        <div className="flex-1">
           {/* Header */}
   
           <div className="flex items-center justify-between">
@@ -109,17 +118,23 @@ import {
           {/* icons */}
   
           <div className="flex justify-between text-gray-500 p-2">
-          <ChatBubbleLeftIcon
-            onClick={() => {
-              if (!session) {
-                signIn();
-              } else {
-                setPostId(post.id);
-                setOpen(!open);
-              }
-            }}
-            className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
-          />
+          <div className="flex items-center select-none">
+            <ChatBubbleLeftIcon
+              onClick={() => {
+                if (!session) {
+                  signIn();
+                } else {
+                  setPostId(post.id);
+                  setOpen(!open);
+                }
+              }}
+              className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
+            />
+            {comments.length > 0 && (
+              <span className="text-sm">{comments.length}</span>
+            )}
+          </div>
+          
             {session?.user.uid === post?.data().id && (
             <TrashIcon
               onClick={deletePost}
